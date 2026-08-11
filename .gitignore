@@ -1,0 +1,31 @@
+# Local .terraform directories
+**/.terraform/
+
+# Arquivo de lock de versões dos providers
+.terraform.lock.hcl
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Exclude sensitive variables files
+*.tfvars
+*.tfvars.json
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore CLI local configuration files
+.terraformrc
+terraform.rc
+
+# System & Editor files
+.DS_Store
+.idea/
+.vscode/
+*.swp

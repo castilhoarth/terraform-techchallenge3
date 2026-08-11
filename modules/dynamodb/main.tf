@@ -1,0 +1,14 @@
+resource "aws_dynamodb_table" "analytics" {
+    name = var.table_name
+    billing_mode = "PAY_PER_REQUEST" # On-demand para custo otimizado
+    hash_key = "id" # Chave primária da tabela
+
+    attribute {
+        name = "id"
+        type = "S" # Tipo String
+    }
+  
+  tags = {
+    Name = var.table_name
+  }
+}
