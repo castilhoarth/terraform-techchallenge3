@@ -1,5 +1,3 @@
-Aqui está um **README.md** pronto, estruturado e profissional para apresentação do projeto no GitHub:
-
 ```markdown
 # 🚀 Tech Challenge - Fase 3: Infraestrutura AWS com Terraform
 
@@ -118,11 +116,5 @@ terraform apply -auto-approve
 * **Remote State:** O arquivo de estado do Terraform (`terraform.tfstate`) é armazenado com segurança em um bucket S3 remoto, utilizando trava de estado (`use_lockfile = true`).
 * **Isolamento de Credenciais:** Arquivos com variáveis sensíveis (`.tfvars`), binários e estados locais estão devidamente ignorados via `.gitignore`.
 * **Segurança de Rede:** Serviços de banco de dados (RDS) e cache (ElastiCache) não possuem IP público e aceitam conexões puramente originadas pelo Security Group do cluster EKS.
-
-```
-
----
-
-Deseja ajustar algum trecho ou adicionar informações específicas sobre os microsserviços que rodarão nessa infraestrutura?
 
 ```
