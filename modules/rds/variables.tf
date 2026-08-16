@@ -1,4 +1,28 @@
-variable "vpc_id" { type = string }
-variable "subnet_ids" { type = list(string) }
-variable "eks_security_group_id" { type = string }
-variable "databases" { type = list(string) }
+variable "vpc_id" {
+  type = string
+}
+
+variable "private_subnet_ids" {
+  type = list(string)
+}
+
+variable "subnet_ids" {
+  type    = list(string)
+  default = []
+}
+
+variable "eks_security_group" {
+  type = string
+}
+
+variable "eks_security_group_id" {
+  type    = string
+  default = ""
+}
+
+variable "databases" {
+  type = map(object({
+    db_name  = string
+    username = string
+  }))
+}

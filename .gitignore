@@ -29,3 +29,4 @@ terraform.rc
 .idea/
 .vscode/
 *.swp
+*.tfvars

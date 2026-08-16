@@ -3,9 +3,12 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Project     = "TechChallengeFase3"
-      Environment = "Production"
-      ManagedBy   = "Terraform"
+      Project      = "TechChallenge"
+      Application  = "ToggleMaster"
+      Phase        = "Fase 3"
+      Environment  = "Production"
+      ManagedBy    = "Terraform"
+      Architecture = "Microservices"
     }
   }
 }

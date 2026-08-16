@@ -1,36 +1,35 @@
 # 1. Gera uma senha aleatória forte para cada banco de dados
 resource "random_password" "master_password" {
-    for_each = toset(var.databases)
+    for_each = var.databases
 
-    length = 16
-    special = true
+    length           = 16
+    special          = true
     override_special = "!@#$%^&*()-_=+[]{}<>:;,.?"
 }
 
 # 2. Cria a Secret no Secrest Manager
 resource "aws_secretsmanager_secret" "db_secret" {
-    for_each = toset(var.databases)
+    for_each = var.databases
 
-    name = "tech-challenge/rds-${each.value}"
+    name = "tech-challenge/rds-${each.key}"
 
-
-# Crucial para o Academy:
-# Define o tempo de retenção para 0 dias, permitindo que a Secret seja
-# destruída imediatamente no 'Terraform destroy'sem travar novas execuções.
-recovery_window_in_days = 0
+    # Crucial para o Academy:
+    # Define o tempo de retenção para 0 dias, permitindo que a Secret seja
+    # destruída imediatamente no 'Terraform destroy' sem travar novas execuções.
+    recovery_window_in_days = 0
 }
 
 # 3. Guarda as credenciais (usuário e senha, engine e porta) no Secret Manager
 resource "aws_secretsmanager_secret_version" "db_secret_version" {
-    for_each = toset(var.databases)
+    for_each = var.databases
 
-    secret_id = aws_secretsmanager_secret.db_secret[each.value].id
+    secret_id = aws_secretsmanager_secret.db_secret[each.key].id
     secret_string = jsonencode({
-        username = "dbadmin"
-        password = random_password.master_password[each.value].result
+        username = lookup(each.value, "username", "dbadmin")
+        password = random_password.master_password[each.key].result
         engine   = "postgres"
         port     = 5432
-        db_name  = replace(each.value, "-", "_")
+        db_name  = replace(each.key, "-", "_")
     })
 }
 
@@ -61,22 +60,20 @@ resource "aws_security_group" "toggle-master-rds_sg" {
 
 # 5. Cria as instâncias RDS PostgreSQL consumindo a senha gerada
 resource "aws_db_instance" "postgres" {
-    for_each = toset(var.databases)
+    for_each = var.databases
 
-    identifier = "rds-${each.value}"
+    identifier        = "rds-${each.key}"
     allocated_storage = 20
-    engine = "postgres"
-    engine_version = "15"
-    instance_class = "db.t3.micro"
-    db_name = replace(each.value, "-", "_")
-    username = "dbadmin"
+    engine            = "postgres"
+    engine_version    = "15"
+    instance_class    = "db.t3.micro"
+    db_name           = replace(each.key, "-", "_")
+    username          = lookup(each.value, "username", "dbadmin")
+    password          = random_password.master_password[each.key].result
 
-    # A senha do banco vem diretamente do gerador de senhas do Terraform
-    password = random_password.master_password[each.value].result
-
-    db_subnet_group_name = aws_db_subnet_group.main.name
+    db_subnet_group_name   = aws_db_subnet_group.main.name
     vpc_security_group_ids = [aws_security_group.toggle-master-rds_sg.id]
-    skip_final_snapshot = true
+    skip_final_snapshot    = true
 }
 
 

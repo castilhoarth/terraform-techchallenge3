@@ -1,16 +1,16 @@
 variable "aws_region" {
-  type    = string
-  default = "us-east-1"
-}
-
-variable "use_academy-role" {
-  type        = bool
-  default     = true
-  description = "Define se deve utilizar o LabRole padrão do AWS Academy"
-}
-
-variable "lab_role_arn" {
+  description = "Região da AWS onde os recursos serão provisionados"
   type        = string
-  default     = "arn:aws:iam::111969794439:role/LabRole" # Substitua pelo seu Account ID
-  description = "ARN da LabRole do AWS Academy"
+  default     = "us-east-1"
+}
+
+variable "cluster_name" {
+  type    = string
+  default = "togglemaster-eks"
+}
+
+variable "cluster_version" {
+  description = "Versão do K8s no EKS"
+  type        = string
+  default     = "1.36"
 }
