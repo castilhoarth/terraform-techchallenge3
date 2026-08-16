@@ -1,7 +1,3 @@
-Aqui está a documentação completa do projeto **ToggleMaster**, elaborada do zero em formato `README.md`, refletindo a arquitetura de infraestrutura nativa e automatizada com Terraform em Conta Pessoal da AWS.
-
----
-
 # 🚀 ToggleMaster — Infrastructure as Code (IaC)
 
 Este repositório contém a infraestrutura como código (IaC) completa e automatizada para o **ToggleMaster**, uma plataforma de gerenciamento e avaliação de Feature Flags composta por **5 microsserviços**:
