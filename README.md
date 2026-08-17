@@ -173,6 +173,43 @@ kubectl get nodes
 
 ---
 
+## ⚠️ Limitações do AWS Free Tier & Solução de Arquitetura
+
+### 1. Restrição de Cota do RDS PostgreSQL
+
+#### **Desafio Encontrado:**
+Durante a execução da infraestrutura via Terraform, a conta AWS (Free Tier/Academy) retornou o seguinte erro ao tentar criar a terceira instância do RDS PostgreSQL (`rds-targeting`):
+
+```text
+InstanceQuotaExceeded: You reached the maximum number of instances available with free plan accounts.
+A AWS restringe a criação de no máximo 2 instâncias RDS simultâneas sob a cota do plano gratuito.
+
+Solução Aplicada:
+Para contornar essa limitação sem comprometer a arquitetura de microsserviços do projeto, consolidamos os 3 bancos de dados em 2 instâncias RDS físicas:
+
+RDS 1 (rds-auth): Hospeda o banco auth_db.
+
+RDS 2 (rds-flag): Hospeda os bancos flag_db e targeting_db de forma isolada na mesma instância.
+
+Procedimento de Provisionamento do targeting_db:
+Como a propriedade db_name do recurso aws_db_instance do Terraform cria apenas o banco inicial (flag_db), o banco de dados do targeting-service foi criado diretamente no servidor PostgreSQL através de um Pod efêmero dentro do cluster EKS (mantendo o isolamento de rede da VPC privada):
+
+Acesso ao Pod efêmero no EKS:
+
+Bash
+kubectl run psql-check --rm -i --tty --image=postgres:15-alpine -- bash
+Conexão ao RDS rds-flag:
+
+Bash
+psql -h <ENDPOINT_DO_RDS_FLAG> -U flag_user -d flag_db
+Criação do banco de dados:
+
+SQL
+CREATE DATABASE targeting_db;
+Validação:
+Executando o comando \l dentro do prompt do PostgreSQL, ambos os bancos (flag_db e targeting_db) figuram com o mesmo proprietário (flag_user) na mesma instância.
+
+
 ## 🧹 Destruição da Infraestrutura
 
 Para remover todos os recursos provisionados na AWS e evitar custos não intencionais:
