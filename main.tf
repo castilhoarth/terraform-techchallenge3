@@ -39,16 +39,25 @@ module "eks" {
 module "rds" {
   source = "./modules/rds"
 
-  vpc_id             = module.vpc.vpc_id
-  private_subnet_ids = module.vpc.private_subnet_ids
-  subnet_ids = module.vpc.private_subnet_ids 
-  eks_security_group = module.eks.cluster_security_group_id
+  vpc_id                = module.vpc.vpc_id
+  private_subnet_ids    = module.vpc.private_subnet_ids
+  subnet_ids            = module.vpc.private_subnet_ids
+  eks_security_group    = module.eks.cluster_security_group_id
   eks_security_group_id = module.eks.cluster_security_group_id
 
-  databases = {
-    auth      = { db_name = "auth_db", username = "auth_user" }
-    flag      = { db_name = "flag_db", username = "flag_user" }
-    targeting = { db_name = "targeting_db", username = "targeting_user" }
+  instances = {
+    auth = {
+      username  = "auth_user"
+      databases = ["auth_db"]
+    }
+
+    flag = {
+      username = "flag_user"
+      databases = [
+        "flag_db",
+        "targeting_db"
+      ]
+    }
   }
 }
 
@@ -56,12 +65,12 @@ module "rds" {
 module "elasticache" {
   source = "./modules/elasticache"
 
-  vpc_id             = module.vpc.vpc_id
-  private_subnet_ids = module.vpc.private_subnet_ids
-  subnet_ids = module.vpc.private_subnet_ids
-  eks_security_group = module.eks.cluster_security_group_id
+  vpc_id                = module.vpc.vpc_id
+  private_subnet_ids    = module.vpc.private_subnet_ids
+  subnet_ids            = module.vpc.private_subnet_ids
+  eks_security_group    = module.eks.cluster_security_group_id
   eks_security_group_id = module.eks.cluster_security_group_id
-  node_type          = "cache.t3.micro"
+  node_type             = "cache.t3.micro"
 }
 
 # 6. Banco NoSQL (DynamoDB - Analytics Service)

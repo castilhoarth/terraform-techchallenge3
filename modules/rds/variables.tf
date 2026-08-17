@@ -20,9 +20,9 @@ variable "eks_security_group_id" {
   default = ""
 }
 
-variable "databases" {
+variable "instances" {
   type = map(object({
-    db_name  = string
     username = string
+    databases = list(string)
   }))
 }
